@@ -344,14 +344,14 @@ public class AirQualityService : IAirQualityService
     {
         try
         {
-            var apiToken = _configuration["GolemioApiToken"];
+            var apiToken = _configuration["GOLEMIO_API_TOKEN"] ?? _configuration["GolemioApiToken"];
             if (string.IsNullOrEmpty(apiToken))
             {
-                _logger.Error("GolemioApiToken is not configured in appsettings.json");
+                _logger.Error("GOLEMIO_API_TOKEN environment variable or GolemioApiToken is not configured");
                 return new ToolResponse<string>
                 {
                     Success = false,
-                    ErrorMessage = "GolemioApiToken is not configured"
+                    ErrorMessage = "GOLEMIO_API_TOKEN environment variable is not configured"
                 };
             }
 

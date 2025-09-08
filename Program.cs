@@ -8,7 +8,23 @@ using System.ComponentModel;
 using Serilog;
 using PragueMCP.Services;
 using PragueMCP.Tools;
+using DotNetEnv;
 
+// Load environment variables from .env file if it exists
+// This must be done before creating the WebApplication builder so that
+// ASPNETCORE_* environment variables are available during builder creation
+var envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envFilePath))
+{
+    // Load .env file - system environment variables take precedence
+    Env.Load(envFilePath, new LoadOptions(
+        setEnvVars: true,
+        clobberExistingVars: false, // Don't override system environment variables
+        onlyExactPath: true
+    ));
+}
+
+// Create builder with environment variables already loaded
 var builder = WebApplication.CreateBuilder(args);
 
 // Ensure configuration files are loaded from the application's base directory
@@ -16,6 +32,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.SetBasePath(AppContext.BaseDirectory);
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+// Add environment variables (this will override appsettings.json values)
+builder.Configuration.AddEnvironmentVariables();
+
+// Configure URLs - environment variables take precedence
+var configuredUrls = builder.Configuration["ASPNETCORE_URLS"] ?? builder.Configuration["Urls"];
+if (!string.IsNullOrEmpty(configuredUrls))
+{
+    builder.WebHost.UseUrls(configuredUrls);
+}
 
 // Clear all existing logging providers to ensure no console output
 builder.Logging.ClearProviders();
