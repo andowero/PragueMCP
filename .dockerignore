@@ -1,0 +1,68 @@
+# Build artifacts
+bin/
+obj/
+publish/
+*.tar.gz
+
+# IDE and editor files
+.vs/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation and README files
+*.md
+README*
+
+# Test files
+Tests/
+test/
+tests/
+
+# Deployment files
+deployment/
+DEPLOYMENT.md
+
+# Environment files (will be provided at runtime)
+.env
+.env.*
+
+# Log files
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Package files
+*.nupkg
+*.snupkg
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

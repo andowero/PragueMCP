@@ -1,0 +1,47 @@
+[Unit]
+Description=Prague MCP Server Container
+After=network.target
+Wants=network.target
+
+[Service]
+Type=exec
+User=root
+Group=root
+Restart=always
+RestartSec=10
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+# Podman container management
+ExecStartPre=-/usr/bin/podman stop praguemcp
+ExecStartPre=-/usr/bin/podman rm praguemcp
+ExecStart=/usr/bin/podman run \
+    --name praguemcp \
+    --rm \
+    -p 5093:5093 \
+    --env-file /var/www/praguemcp/.env \
+    --volume /var/www/praguemcp/logs:/app/logs:Z \
+    --security-opt no-new-privileges:true \
+    --cap-drop ALL \
+    --read-only \
+    --tmpfs /tmp \
+    --tmpfs /var/tmp \
+    praguemcp-server:latest
+
+ExecStop=/usr/bin/podman stop praguemcp
+ExecStopPost=-/usr/bin/podman rm praguemcp
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/praguemcp/logs
+
+# Logging
+SyslogIdentifier=praguemcp-container
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
